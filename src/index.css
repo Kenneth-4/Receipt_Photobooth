@@ -83,24 +83,12 @@ html, body {
 .kiosk-viewport {
   position: relative;
   z-index: 1;
-  width: 100%;
-  max-width: 520px;
+  width: 100vw;
   height: 100vh;
-  max-height: 940px;
   background: radial-gradient(circle at 50% 10%, #FFF4F8 0%, #FFDFEB 60%, #FAD2E2 100%);
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-kiosk);
   overflow: hidden;
-  border-radius: 0px;
-}
-
-@media (min-width: 540px) {
-  .kiosk-viewport {
-    height: 94vh;
-    border-radius: 36px;
-    border: 6px solid #FFFFFF;
-  }
 }
 
 /* Sparkle Floating Elements */

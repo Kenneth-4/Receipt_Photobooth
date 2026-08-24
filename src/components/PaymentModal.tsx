@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import anime from 'animejs';
 import confetti from 'canvas-confetti';
-import { X, CreditCard, Sparkles, Check, Heart } from 'lucide-react';
+import { X, ArrowLeft, CreditCard, Sparkles, Check, Heart } from 'lucide-react';
 import type { LayoutId } from '../types';
 import { playCutePop, playChime } from '../utils/sound';
 
@@ -106,11 +106,40 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           borderRadius: '30px',
           padding: '28px 24px',
           boxShadow: '0 24px 50px rgba(108, 76, 89, 0.35)',
-          border: '3px solid #F8D3E1',
+          border: 'none',
           position: 'relative',
           textAlign: 'center',
         }}
       >
+        {/* Back Button on Top-Left */}
+        <button
+          onClick={handleClose}
+          title="Back to Layout Selection"
+          style={{
+            position: 'absolute',
+            top: '16px',
+            left: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            borderRadius: '16px',
+            padding: '6px 12px',
+            backgroundColor: '#FFF0F5',
+            border: 'none',
+            cursor: 'pointer',
+            color: '#6C4C59',
+            fontSize: '12px',
+            fontWeight: 700,
+            transition: 'background-color 0.2s',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#FFE0EB')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFF0F5')}
+        >
+          <ArrowLeft size={14} strokeWidth={2.2} />
+          <span>Back</span>
+        </button>
+
+        {/* Close Button on Top-Right */}
         <button
           onClick={handleClose}
           style={{
@@ -171,7 +200,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 backgroundColor: '#FFF7FA',
                 borderRadius: '16px',
                 padding: '16px',
-                border: '1.5px dashed #F5CAD7',
                 marginBottom: '20px',
               }}
             >

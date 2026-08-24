@@ -166,7 +166,6 @@ export const CameraScreen: React.FC<CameraScreenProps> = ({ layout, onBack, onHo
         justifyContent: 'space-between',
         padding: '20px',
         position: 'relative',
-        background: 'radial-gradient(circle at 50% 15%, #FFF2F7 0%, #FFDFEB 55%, #FAD2E2 100%)',
         overflowY: 'auto',
       }}
     >
@@ -199,22 +198,33 @@ export const CameraScreen: React.FC<CameraScreenProps> = ({ layout, onBack, onHo
             playCutePop(0.9);
             onBack();
           }}
+          title="Back to Payment"
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '4px',
+            gap: '6px',
             background: '#FFFFFF',
             border: '1.5px solid #F5CAD7',
-            padding: '8px 14px',
-            borderRadius: '20px',
+            padding: '8px 16px',
+            borderRadius: '24px',
             color: '#6C4C59',
             fontSize: '13px',
             fontWeight: 700,
             cursor: 'pointer',
             boxShadow: '0 4px 10px rgba(220, 130, 160, 0.15)',
+            transition: 'background-color 0.2s, transform 0.15s',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#FFF0F5';
+            e.currentTarget.style.transform = 'translateX(-2px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#FFFFFF';
+            e.currentTarget.style.transform = 'translateX(0)';
           }}
         >
-          <ArrowLeft size={16} /> Layouts
+          <ArrowLeft size={16} strokeWidth={2.2} />
+          <span>Back</span>
         </button>
 
         <h2

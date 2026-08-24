@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import anime from 'animejs';
-import { X, Sparkles, CheckCircle2 } from 'lucide-react';
+import { X, ArrowLeft, Sparkles, CheckCircle2 } from 'lucide-react';
 import { playCutePop } from '../utils/sound';
 
 interface HelpModalProps {
@@ -82,11 +82,39 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
           borderRadius: '28px',
           padding: '24px',
           boxShadow: '0 20px 40px rgba(108, 76, 89, 0.3)',
-          border: '3px solid #F8D3E1',
+          border: 'none',
           position: 'relative',
         }}
       >
-        {/* Close Button */}
+        {/* Back Button on Top-Left */}
+        <button
+          onClick={handleClose}
+          title="Back to Layout Selection"
+          style={{
+            position: 'absolute',
+            top: '16px',
+            left: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            borderRadius: '16px',
+            padding: '6px 12px',
+            backgroundColor: '#FFF0F5',
+            border: 'none',
+            cursor: 'pointer',
+            color: '#6C4C59',
+            fontSize: '12px',
+            fontWeight: 700,
+            transition: 'background-color 0.2s',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#FFE0EB')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFF0F5')}
+        >
+          <ArrowLeft size={14} strokeWidth={2.2} />
+          <span>Back</span>
+        </button>
+
+        {/* Close Button on Top-Right */}
         <button
           onClick={handleClose}
           style={{

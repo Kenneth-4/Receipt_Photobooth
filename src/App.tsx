@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { KioskContainer } from './components/KioskContainer';
 import { HomeScreen } from './components/HomeScreen';
 import { LayoutSelectScreen } from './components/LayoutSelectScreen';
+import { PaymentScreen } from './components/PaymentScreen';
 import { CameraScreen } from './components/CameraScreen';
 import type { LayoutId, ScreenState } from './types';
 
@@ -17,13 +18,21 @@ export const App: React.FC = () => {
     setScreen('home');
   };
 
-  const handleProceedToCamera = (layout: LayoutId) => {
+  const handleProceedToPayment = (layout: LayoutId) => {
     setSelectedLayout(layout);
-    setScreen('camera');
+    setScreen('payment');
   };
 
   const handleBackToLayouts = () => {
     setScreen('layout-select');
+  };
+
+  const handlePaymentSuccess = () => {
+    setScreen('camera');
+  };
+
+  const handleBackToPayment = () => {
+    setScreen('payment');
   };
 
   return (
@@ -33,14 +42,22 @@ export const App: React.FC = () => {
       {screen === 'layout-select' && (
         <LayoutSelectScreen
           onBackToHome={handleBackToHome}
-          onProceedToCamera={handleProceedToCamera}
+          onProceedToPayment={handleProceedToPayment}
+        />
+      )}
+
+      {screen === 'payment' && (
+        <PaymentScreen
+          selectedLayout={selectedLayout}
+          onBack={handleBackToLayouts}
+          onPaymentSuccess={handlePaymentSuccess}
         />
       )}
 
       {screen === 'camera' && (
         <CameraScreen
           layout={selectedLayout}
-          onBack={handleBackToLayouts}
+          onBack={handleBackToPayment}
           onHome={handleBackToHome}
         />
       )}

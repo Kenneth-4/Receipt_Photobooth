@@ -1,14 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import anime from 'animejs';
-import { Camera, HelpCircle, Heart, ArrowRight, Star } from 'lucide-react';
+import { ArrowLeft, HelpCircle, Heart, Star } from 'lucide-react';
 import type { LayoutId } from '../types';
 import { playCutePop, playChime } from '../utils/sound';
 import { HelpModal } from './HelpModal';
-import { PaymentModal } from './PaymentModal';
 
 interface LayoutSelectScreenProps {
   onBackToHome: () => void;
-  onProceedToCamera: (layout: LayoutId) => void;
+  onProceedToPayment: (layout: LayoutId) => void;
 }
 
 interface LayoutItem {
@@ -27,16 +26,14 @@ const layouts: LayoutItem[] = [
 
 export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
   onBackToHome,
-  onProceedToCamera,
+  onProceedToPayment,
 }) => {
-  const [selectedLayout, setSelectedLayout] = useState<LayoutId>('grid4'); // Default to 4 shots as in user mockup
+  const [selectedLayout, setSelectedLayout] = useState<LayoutId>('grid4');
   const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const heartBadgeRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     // anime.js staggered entry animation for layout cards
@@ -60,65 +57,38 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
       duration: 600,
       easing: 'easeOutCubic',
     });
-
-    // Floating Next Button slide up
-    if (buttonRef.current) {
-      anime({
-        targets: buttonRef.current,
-        translateY: [40, 0],
-        opacity: [0, 1],
-        delay: 350,
-        duration: 700,
-        easing: 'easeOutBack(1.2)',
-      });
-    }
   }, []);
 
   const handleSelectLayout = (id: LayoutId, cardElement: HTMLElement) => {
     playCutePop(1.1);
     setSelectedLayout(id);
 
-    // anime.js micro-bounce on clicked card
+    // anime.js micro-bounce on clicked card and direct transition to payment screen
     anime({
       targets: cardElement,
-      scale: [1, 0.96, 1.02, 1],
-      duration: 380,
+      scale: [1, 0.95, 1.03, 1],
+      duration: 280,
       easing: 'easeInOutSine',
+      complete: () => {
+        playChime();
+        onProceedToPayment(id);
+      },
     });
-  };
-
-  const handleNextPayment = () => {
-    playChime();
-    if (buttonRef.current) {
-      anime({
-        targets: buttonRef.current,
-        scale: [1, 0.94, 1.04, 1],
-        duration: 300,
-        easing: 'easeInOutQuad',
-        complete: () => {
-          setIsPaymentOpen(true);
-        },
-      });
-    } else {
-      setIsPaymentOpen(true);
-    }
   };
 
   // Render photo preview slots according to layout geometry
   const renderPhotoSlots = (id: LayoutId, isSelected: boolean) => {
-    const slotColor = isSelected ? '#FFDEEB' : '#E8E7F5';
-    const slotBorder = isSelected ? '1px solid #F8C3D8' : '1px solid #DFDCED';
+    const slotColor = isSelected ? '#FFDDE9' : '#ECEBF6';
 
     switch (id) {
       case 'single':
         return (
           <div
             style={{
-              width: '68px',
-              height: '92px',
+              width: '74px',
+              height: '98px',
               backgroundColor: slotColor,
-              border: slotBorder,
-              borderRadius: '6px',
+              borderRadius: '8px',
               boxShadow: isSelected ? '0 2px 8px rgba(230, 90, 132, 0.15)' : 'none',
               transition: 'background-color 0.3s ease',
             }}
@@ -129,19 +99,18 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
         return (
           <div
             style={{
-              width: '42px',
-              height: '92px',
+              width: '46px',
+              height: '98px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '3px',
+              gap: '4px',
             }}
           >
             <div
               style={{
                 flex: 1,
                 backgroundColor: slotColor,
-                border: slotBorder,
-                borderRadius: '4px',
+                borderRadius: '6px',
                 transition: 'background-color 0.3s ease',
               }}
             />
@@ -149,8 +118,7 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
               style={{
                 flex: 1,
                 backgroundColor: slotColor,
-                border: slotBorder,
-                borderRadius: '4px',
+                borderRadius: '6px',
                 transition: 'background-color 0.3s ease',
               }}
             />
@@ -161,8 +129,8 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
         return (
           <div
             style={{
-              width: '76px',
-              height: '76px',
+              width: '78px',
+              height: '78px',
               display: 'grid',
               gridTemplateColumns: '1fr 1fr',
               gridTemplateRows: '1fr 1fr',
@@ -174,7 +142,6 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
                 key={idx}
                 style={{
                   backgroundColor: slotColor,
-                  border: slotBorder,
                   borderRadius: '4px',
                   transition: 'background-color 0.3s ease',
                 }}
@@ -187,11 +154,11 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
         return (
           <div
             style={{
-              width: '42px',
-              height: '96px',
+              width: '46px',
+              height: '100px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '2px',
+              gap: '3px',
             }}
           >
             {[0, 1, 2, 3, 4, 5].map((idx) => (
@@ -200,8 +167,7 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
                 style={{
                   flex: 1,
                   backgroundColor: slotColor,
-                  border: slotBorder,
-                  borderRadius: '2px',
+                  borderRadius: '3px',
                   transition: 'background-color 0.3s ease',
                 }}
               />
@@ -225,7 +191,6 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
         justifyContent: 'space-between',
         padding: '24px 20px 28px 20px',
         position: 'relative',
-        background: 'radial-gradient(circle at 50% 15%, #FFF2F7 0%, #FFDFEB 55%, #FAD2E2 100%)',
       }}
     >
       {/* Decorative background star matching mockup */}
@@ -253,7 +218,7 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
             padding: '4px 0',
           }}
         >
-          {/* Camera Icon Button */}
+          {/* Back Button */}
           <button
             onClick={() => {
               playCutePop(0.9);
@@ -261,22 +226,31 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
             }}
             title="Back to Home"
             style={{
-              width: '42px',
-              height: '42px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: 'transparent',
-              border: 'none',
+              gap: '6px',
+              backgroundColor: '#FFFFFF',
+              border: '1.5px solid #F5CAD7',
+              borderRadius: '24px',
+              padding: '8px 16px',
               cursor: 'pointer',
-              color: '#3E2A34',
-              borderRadius: '50%',
-              transition: 'background-color 0.2s',
+              color: '#6C4C59',
+              fontSize: '14px',
+              fontWeight: 700,
+              boxShadow: '0 4px 10px rgba(220, 130, 160, 0.15)',
+              transition: 'background-color 0.2s, transform 0.15s',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.4)')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#FFF0F5';
+              e.currentTarget.style.transform = 'translateX(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#FFFFFF';
+              e.currentTarget.style.transform = 'translateX(0)';
+            }}
           >
-            <Camera size={26} strokeWidth={1.8} />
+            <ArrowLeft size={18} strokeWidth={2.2} />
+            <span>Back</span>
           </button>
 
           {/* Title: Choose Your Layout */}
@@ -302,39 +276,44 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
             }}
             title="Help / Instructions"
             style={{
-              width: '42px',
-              height: '42px',
+              width: '40px',
+              height: '40px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              color: '#3E2A34',
+              backgroundColor: '#FFFFFF',
+              border: '1.5px solid #F5CAD7',
               borderRadius: '50%',
+              cursor: 'pointer',
+              color: '#6C4C59',
+              boxShadow: '0 4px 10px rgba(220, 130, 160, 0.15)',
               transition: 'background-color 0.2s',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.4)')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#FFF0F5')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
           >
-            <HelpCircle size={26} strokeWidth={1.8} />
+            <HelpCircle size={20} strokeWidth={2} />
           </button>
         </div>
 
-        {/* 3 Cute Hearts below Header */}
+        {/* Subtitle & Cute Hearts */}
         <div
           style={{
             display: 'flex',
-            justifyContent: 'center',
+            flexDirection: 'column',
             alignItems: 'center',
-            gap: '8px',
-            marginTop: '8px',
-            marginBottom: '18px',
+            gap: '6px',
+            marginTop: '6px',
+            marginBottom: '16px',
           }}
         >
-          <Heart size={16} color="#6C4C59" fill="#6C4C59" strokeWidth={1.5} />
-          <Heart size={16} color="#6C4C59" fill="#6C4C59" strokeWidth={1.5} />
-          <Heart size={16} color="#6C4C59" fill="none" strokeWidth={1.8} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Heart size={14} color="#6C4C59" fill="#6C4C59" strokeWidth={1.5} />
+            <span style={{ fontSize: '13px', color: '#7E6673', fontWeight: 600 }}>
+              Tap any shot option to proceed to payment
+            </span>
+            <Heart size={14} color="#6C4C59" fill="#6C4C59" strokeWidth={1.5} />
+          </div>
         </div>
       </div>
 
@@ -344,10 +323,10 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
         style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
-          gap: '16px',
-          margin: '0 auto',
+          gap: '20px',
+          margin: 'auto auto',
           width: '100%',
-          maxWidth: '460px',
+          maxWidth: '560px',
           zIndex: 2,
         }}
       >
@@ -361,19 +340,19 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
               onClick={(e) => handleSelectLayout(layout.id, e.currentTarget)}
               style={{
                 backgroundColor: '#FFFFFF',
-                borderRadius: '18px',
-                height: '198px',
+                borderRadius: '24px',
+                height: '215px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                padding: '12px 14px 14px 14px',
+                padding: '16px 18px 18px 18px',
                 cursor: 'pointer',
                 position: 'relative',
-                border: isSelected ? '3px solid #6C4C59' : '2px solid rgba(255, 255, 255, 0.8)',
+                border: 'none',
                 boxShadow: isSelected
-                  ? '0 12px 28px rgba(108, 76, 89, 0.22), 0 2px 8px rgba(108, 76, 89, 0.1)'
-                  : '0 8px 20px rgba(220, 140, 165, 0.16)',
-                transition: 'border 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease',
+                  ? '0 16px 36px rgba(108, 76, 89, 0.28), 0 2px 10px rgba(108, 76, 89, 0.12)'
+                  : '0 10px 24px rgba(220, 140, 165, 0.16)',
+                transition: 'box-shadow 0.25s ease, transform 0.2s ease',
               }}
             >
               {/* Selected Heart Checkmark Badge on Top-Right Corner */}
@@ -382,17 +361,17 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
                   ref={heartBadgeRef}
                   style={{
                     position: 'absolute',
-                    top: '-12px',
-                    right: '-10px',
+                    top: '-10px',
+                    right: '-8px',
                     width: '32px',
                     height: '32px',
                     borderRadius: '50%',
                     backgroundColor: '#FFFFFF',
-                    border: '2px solid #6C4C59',
+                    border: 'none',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 4px 10px rgba(108, 76, 89, 0.25)',
+                    boxShadow: '0 4px 12px rgba(108, 76, 89, 0.25)',
                     zIndex: 5,
                   }}
                 >
@@ -449,59 +428,8 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
         })}
       </div>
 
-      {/* Bottom Floating Action Bar / Next Button */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginTop: '20px',
-          zIndex: 3,
-        }}
-      >
-        <button
-          ref={buttonRef}
-          onClick={handleNextPayment}
-          style={{
-            padding: '16px 42px',
-            backgroundColor: '#6C4C59',
-            color: '#FFFFFF',
-            borderRadius: '36px',
-            border: 'none',
-            fontFamily: 'var(--font-serif)',
-            fontSize: '19px',
-            fontWeight: 700,
-            letterSpacing: '0.4px',
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '10px',
-            boxShadow: '0 12px 28px rgba(108, 76, 89, 0.38)',
-            transition: 'background-color 0.2s, transform 0.15s',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#5D3F4C';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#6C4C59';
-          }}
-        >
-          <span>Next: Payment</span>
-          <ArrowRight size={22} strokeWidth={2.2} />
-        </button>
-      </div>
-
-      {/* Modals */}
+      {/* Help Modal */}
       <HelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
-      <PaymentModal
-        isOpen={isPaymentOpen}
-        onClose={() => setIsPaymentOpen(false)}
-        selectedLayout={selectedLayout}
-        onProceedToCamera={() => {
-          setIsPaymentOpen(false);
-          onProceedToCamera(selectedLayout);
-        }}
-      />
     </div>
   );
 };

@@ -116,7 +116,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart }) => {
             padding: '6px 18px',
             borderRadius: '24px',
             boxShadow: '0 4px 14px rgba(220, 130, 160, 0.2)',
-            border: '1.5px solid #F5CAD7',
             marginBottom: '10px',
           }}
         >
@@ -168,7 +167,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart }) => {
             boxShadow: 'inset 0 4px 6px rgba(0,0,0,0.4), 0 4px 10px rgba(108, 76, 89, 0.25)',
             position: 'relative',
             zIndex: 4,
-            border: '2px solid #5A3E4A',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -244,7 +242,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart }) => {
           <div
             style={{
               backgroundColor: '#FFF0F5',
-              border: '1.5px solid #F5C6D6',
               borderRadius: '8px',
               padding: '10px',
               textAlign: 'center',
