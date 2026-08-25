@@ -1,111 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --font-hand: 'Caveat', cursive;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  /* Color Palette matching the cute pink design */
+  --bg-pink-light: #FFF0F5;
+  --bg-pink-main: #FFDEE9;
+  --bg-pink-deep: #FCCDE2;
+  --primary-mauve: #6C4C59;
+  --primary-mauve-hover: #5A3E4A;
+  --primary-mauve-active: #48303B;
+  --accent-pink-soft: #FDE8EF;
+  --accent-pink-badge: #FFDEE8;
+  --text-dark: #3D2B35;
+  --text-muted: #8E7380;
+  --card-bg: #FFFFFF;
+  --card-border-idle: #F5D7E2;
+  --card-border-selected: #6C4C59;
+  --preview-slot-idle: #EAE6F8;
+  --preview-slot-selected: #FFDEEB;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  --shadow-soft: 0 8px 24px rgba(224, 130, 160, 0.15);
+  --shadow-kiosk: 0 20px 60px rgba(180, 90, 120, 0.22);
+  --shadow-selected: 0 12px 32px rgba(108, 76, 89, 0.25);
+  --shadow-button: 0 10px 24px rgba(108, 76, 89, 0.35);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-sans);
+  background-color: #F8D7E3;
+  color: var(--text-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Background Ambient Glow & Star Sparkles */
+.kiosk-ambient-bg {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% 20%, #FFF5F8 0%, #FFDEE9 55%, #F8CADC 100%);
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.kiosk-ambient-bg::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: 20%;
+  width: 50vw;
+  height: 50vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+  filter: blur(40px);
+}
+
+/* Kiosk Canvas Shell */
+.kiosk-viewport {
+  position: relative;
+  z-index: 1;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at 50% 10%, #FFF4F8 0%, #FFDFEB 60%, #FAD2E2 100%);
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
+  overflow: hidden;
 }
 
-body {
-  margin: 0;
+/* Sparkle Floating Elements */
+.sparkle-icon {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.85);
+  filter: drop-shadow(0 2px 6px rgba(230, 100, 140, 0.3));
+  pointer-events: none;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+/* Zigzag Serrated Edge for Thermal Receipt */
+.receipt-zigzag-bottom {
+  position: relative;
+  background: #FFFFFF;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
+.receipt-zigzag-bottom::after {
+  content: "";
+  position: absolute;
+  bottom: -14px;
+  left: 0;
+  right: 0;
+  height: 14px;
+  background: linear-gradient(135deg, #FFFFFF 5px, transparent 0),
+              linear-gradient(-135deg, #FFFFFF 5px, transparent 0);
+  background-size: 14px 14px;
+  background-repeat: repeat-x;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
+.receipt-zigzag-top::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 0;
+  right: 0;
+  height: 14px;
+  background: linear-gradient(45deg, #FFFFFF 5px, transparent 0),
+              linear-gradient(-45deg, #FFFFFF 5px, transparent 0);
+  background-size: 14px 14px;
+  background-repeat: repeat-x;
+}
+
+/* Barcode CSS Generator */
+.thermal-barcode {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  height: 38px;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.thermal-barcode-line {
+  background-color: #2F2026;
+  border-radius: 1px;
+}
+
+/* Heart animations */
+@keyframes cutePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+@keyframes cuteFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+}
+
+@keyframes sparkleSpin {
+  0% { transform: rotate(0deg) scale(0.9); opacity: 0.7; }
+  50% { transform: rotate(180deg) scale(1.15); opacity: 1; }
+  100% { transform: rotate(360deg) scale(0.9); opacity: 0.7; }
+}
+
+.animate-pulse-cute {
+  animation: cutePulse 2s ease-in-out infinite;
+}
+
+.animate-float-cute {
+  animation: cuteFloat 3.5s ease-in-out infinite;
+}
+
+.animate-sparkle {
+  animation: sparkleSpin 4s ease-in-out infinite;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(108, 76, 89, 0.2);
   border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
 }
