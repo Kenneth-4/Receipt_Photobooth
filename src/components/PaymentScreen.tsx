@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import anime from 'animejs';
 import confetti from 'canvas-confetti';
+import QRCode from 'qrcode';
 import {
   ArrowLeft,
   QrCode,
@@ -13,7 +14,6 @@ import {
   Heart,
   ShieldCheck,
   Smartphone,
-  ChevronRight,
 } from 'lucide-react';
 import type { LayoutId } from '../types';
 import { playCutePop, playChime } from '../utils/sound';
@@ -37,6 +37,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [isHelpOpen, setIsHelpOpen] = useState<boolean>(false);
+  const [paymentQrDataUrl, setPaymentQrDataUrl] = useState<string>('');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const mainContentRef = useRef<HTMLDivElement>(null);
@@ -46,11 +47,26 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
     LayoutId,
     { title: string; badge: string; price: string; numPrice: string }
   > = {
-    single: { title: 'Single Solo', badge: '1 Shot', price: '$2.00', numPrice: '2.00' },
-    duo: { title: 'Duo Strip', badge: '2 Shots', price: '$3.50', numPrice: '3.50' },
-    grid4: { title: 'Classic Grid', badge: '4 Shots', price: '$5.00', numPrice: '5.00' },
-    strip6: { title: 'Mega Strip', badge: '6 Shots', price: '$6.00', numPrice: '6.00' },
+    single: { title: 'Single Solo', badge: '1 Shot', price: '₱35.00', numPrice: '35.00' },
+    duo: { title: 'Duo Strip', badge: '2 Shots', price: '₱70.00', numPrice: '70.00' },
+    grid4: { title: 'Classic Grid', badge: '4 Shots', price: '₱140.00', numPrice: '140.00' },
+    strip6: { title: 'Mega Strip', badge: '6 Shots', price: '₱210.00', numPrice: '210.00' },
   };
+
+  // Generate actual Payment QR code
+  useEffect(() => {
+    const paymentPayload = `https://photobooth.pay/checkout?amount=${layoutDetails[selectedLayout]?.numPrice || '140.00'}&currency=PHP&layout=${selectedLayout}&ref=PHOTO-${Date.now().toString().slice(-6)}`;
+    QRCode.toDataURL(paymentPayload, {
+      width: 260,
+      margin: 1,
+      color: {
+        dark: '#4A323E',
+        light: '#FFFFFF',
+      },
+    })
+      .then((qr) => setPaymentQrDataUrl(qr))
+      .catch((err) => console.error('Failed to generate payment QR code', err));
+  }, [selectedLayout]);
 
   const currentLayout = layoutDetails[selectedLayout] || layoutDetails.grid4;
 
@@ -179,22 +195,21 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
             marginBottom: '8px',
           }}
         >
-          {/* Back Button */}
+          {/* Back Button (Icon Only) */}
           <button
             onClick={handleStepBack}
             title={step === 'select-method' ? 'Back to Layouts' : 'Back to Payment Options'}
             style={{
+              width: '42px',
+              height: '42px',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
+              justifyContent: 'center',
               backgroundColor: '#FFFFFF',
               border: 'none',
-              borderRadius: '24px',
-              padding: '10px 20px',
+              borderRadius: '50%',
               cursor: 'pointer',
               color: '#6C4C59',
-              fontSize: '14px',
-              fontWeight: 700,
               boxShadow: '0 4px 14px rgba(108, 76, 89, 0.12)',
               transition: 'background-color 0.2s, transform 0.15s',
             }}
@@ -207,8 +222,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
               e.currentTarget.style.transform = 'translateX(0)';
             }}
           >
-            <ArrowLeft size={18} strokeWidth={2.4} />
-            <span>Back</span>
+            <ArrowLeft size={22} strokeWidth={2.2} />
           </button>
 
           {/* Title */}
@@ -305,15 +319,10 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
         }}
       >
         {isSuccess ? (
-          /* Payment Approved Success State */
+          /* Payment Approved Success State (Seamless / Borderless) */
           <div
             style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: '32px',
-              padding: '48px 36px',
               textAlign: 'center',
-              boxShadow: '0 20px 50px rgba(108, 76, 89, 0.18)',
-              border: 'none',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -324,288 +333,195 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
           >
             <div
               style={{
-                width: '84px',
-                height: '84px',
-                borderRadius: '42px',
+                width: '92px',
+                height: '92px',
+                borderRadius: '46px',
                 backgroundColor: '#E8F5E9',
                 color: '#2E7D32',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                marginBottom: '18px',
-                boxShadow: '0 8px 24px rgba(46, 125, 50, 0.15)',
+                marginBottom: '20px',
+                boxShadow: '0 8px 24px rgba(46, 125, 50, 0.18)',
               }}
             >
-              <CheckCircle2 size={54} />
+              <CheckCircle2 size={58} />
             </div>
 
             <h2
               style={{
                 fontFamily: 'var(--font-serif)',
-                fontSize: '30px',
+                fontSize: '32px',
                 fontWeight: 700,
                 color: '#2E7D32',
-                marginBottom: '8px',
+                marginBottom: '10px',
               }}
             >
               Payment Approved! ♡
             </h2>
-            <p style={{ fontSize: '16px', color: '#6C4C59', marginBottom: '18px' }}>
+            <p style={{ fontSize: '17px', color: '#6C4C59', marginBottom: '20px', fontWeight: 600 }}>
               Preparing your photo session... Get ready!
             </p>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
-              <Heart size={22} color="#E65A84" fill="#E65A84" />
-              <Heart size={22} color="#E65A84" fill="#E65A84" />
-              <Heart size={22} color="#E65A84" fill="#E65A84" />
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+              <Heart size={24} color="#E65A84" fill="#E65A84" />
+              <Heart size={24} color="#E65A84" fill="#E65A84" />
+              <Heart size={24} color="#E65A84" fill="#E65A84" />
             </div>
           </div>
         ) : step === 'select-method' ? (
           /* ======================================================== */
-          /* WINDOW 1: TWO COLUMNS OCCUPYING TOP-TO-BOTTOM SPACE      */
+          /* WINDOW 1: COMPACT PAYMENT SELECTION BUTTONS             */
           /* ======================================================== */
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '20px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '28px',
               width: '100%',
               height: '100%',
-              alignItems: 'stretch',
             }}
           >
-            {/* COLUMN 1: QR CODE BUTTON (Occupies Top & Bottom, Borderless) */}
+            {/* BUTTON 1: QR CODE */}
             <button
               onClick={() => handleSelectOption('qr-window')}
               style={{
                 backgroundColor: '#FFFFFF',
-                borderRadius: '32px',
+                borderRadius: '28px',
                 border: 'none',
-                padding: '32px 28px',
+                padding: '36px 32px',
                 cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'space-between',
-                boxShadow: '0 16px 40px rgba(108, 76, 89, 0.12)',
-                transition: 'all 0.25s ease',
-                height: '100%',
-                width: '100%',
+                justifyContent: 'center',
+                gap: '18px',
+                boxShadow: '0 12px 32px rgba(108, 76, 89, 0.12)',
+                transition: 'all 0.22s ease',
+                width: '260px',
+                height: '240px',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-6px)';
-                e.currentTarget.style.boxShadow = '0 24px 50px rgba(108, 76, 89, 0.22)';
+                e.currentTarget.style.boxShadow = '0 20px 44px rgba(108, 76, 89, 0.2)';
                 e.currentTarget.style.backgroundColor = '#FFFDFE';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 16px 40px rgba(108, 76, 89, 0.12)';
+                e.currentTarget.style.boxShadow = '0 12px 32px rgba(108, 76, 89, 0.12)';
                 e.currentTarget.style.backgroundColor = '#FFFFFF';
               }}
+              onMouseDown={(e) => {
+                e.currentTarget.style.transform = 'scale(0.96)';
+              }}
+              onMouseUp={(e) => {
+                e.currentTarget.style.transform = 'translateY(-6px)';
+              }}
             >
-              {/* Top Badge */}
-              <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-                <span
-                  style={{
-                    fontSize: '12px',
-                    fontWeight: 800,
-                    padding: '6px 14px',
-                    borderRadius: '16px',
-                    backgroundColor: '#6C4C59',
-                    color: '#FFFFFF',
-                    letterSpacing: '0.4px',
-                  }}
-                >
-                  OPTION 1 • INSTANT PAY
-                </span>
-              </div>
-
-              {/* Center Big Icon & Title */}
+              {/* QR Code Icon */}
               <div
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '16px',
-                  margin: 'auto 0',
-                }}
-              >
-                <div
-                  style={{
-                    width: '96px',
-                    height: '96px',
-                    borderRadius: '32px',
-                    backgroundColor: '#FFE4EE',
-                    color: '#6C4C59',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 10px 24px rgba(230, 90, 132, 0.22)',
-                  }}
-                >
-                  <QrCode size={52} strokeWidth={2} />
-                </div>
-
-                <div style={{ textAlign: 'center' }}>
-                  <h2
-                    style={{
-                      fontFamily: 'var(--font-serif)',
-                      fontSize: '28px',
-                      fontWeight: 700,
-                      color: '#4A323E',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    QR Code
-                  </h2>
-                  <p style={{ fontSize: '15px', color: '#7E6673', margin: 0, lineHeight: 1.4, maxWidth: '260px' }}>
-                    Scan with GCash, Maya, QRPh, or E-Wallets
-                  </p>
-                </div>
-              </div>
-
-              {/* Bottom Price Pill & Action */}
-              <div
-                style={{
-                  width: '100%',
-                  padding: '14px',
-                  borderRadius: '22px',
-                  backgroundColor: '#FFF0F5',
+                  width: '84px',
+                  height: '84px',
+                  borderRadius: '26px',
+                  backgroundColor: '#FFE4EE',
+                  color: '#6C4C59',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '8px',
-                  color: '#6C4C59',
-                  fontWeight: 700,
-                  fontSize: '16px',
+                  boxShadow: '0 8px 20px rgba(230, 90, 132, 0.2)',
                 }}
               >
-                <span>Pay {currentLayout.price}</span>
-                <ChevronRight size={20} strokeWidth={2.4} />
+                <QrCode size={46} strokeWidth={2} />
               </div>
+
+              {/* Title */}
+              <h2
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: '24px',
+                  fontWeight: 700,
+                  color: '#4A323E',
+                  margin: 0,
+                }}
+              >
+                QR Code
+              </h2>
             </button>
 
-            {/* COLUMN 2: TICKET CODE BUTTON (Occupies Top & Bottom, Borderless) */}
+            {/* BUTTON 2: TICKET CODE */}
             <button
               onClick={() => handleSelectOption('ticket-window')}
               style={{
                 backgroundColor: '#FFFFFF',
-                borderRadius: '32px',
+                borderRadius: '28px',
                 border: 'none',
-                padding: '32px 28px',
+                padding: '36px 32px',
                 cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'space-between',
-                boxShadow: '0 16px 40px rgba(108, 76, 89, 0.12)',
-                transition: 'all 0.25s ease',
-                height: '100%',
-                width: '100%',
+                justifyContent: 'center',
+                gap: '18px',
+                boxShadow: '0 12px 32px rgba(108, 76, 89, 0.12)',
+                transition: 'all 0.22s ease',
+                width: '260px',
+                height: '240px',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-6px)';
-                e.currentTarget.style.boxShadow = '0 24px 50px rgba(108, 76, 89, 0.22)';
+                e.currentTarget.style.boxShadow = '0 20px 44px rgba(108, 76, 89, 0.2)';
                 e.currentTarget.style.backgroundColor = '#FFFDFE';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 16px 40px rgba(108, 76, 89, 0.12)';
+                e.currentTarget.style.boxShadow = '0 12px 32px rgba(108, 76, 89, 0.12)';
                 e.currentTarget.style.backgroundColor = '#FFFFFF';
               }}
+              onMouseDown={(e) => {
+                e.currentTarget.style.transform = 'scale(0.96)';
+              }}
+              onMouseUp={(e) => {
+                e.currentTarget.style.transform = 'translateY(-6px)';
+              }}
             >
-              {/* Top Badge */}
-              <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-                <span
-                  style={{
-                    fontSize: '12px',
-                    fontWeight: 800,
-                    padding: '6px 14px',
-                    borderRadius: '16px',
-                    backgroundColor: '#FFE1EA',
-                    color: '#824F64',
-                    letterSpacing: '0.4px',
-                  }}
-                >
-                  OPTION 2 • TOUCH KEYPAD
-                </span>
-              </div>
-
-              {/* Center Big Icon & Title */}
+              {/* Ticket Icon */}
               <div
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '16px',
-                  margin: 'auto 0',
-                }}
-              >
-                <div
-                  style={{
-                    width: '96px',
-                    height: '96px',
-                    borderRadius: '32px',
-                    backgroundColor: '#FFE4EE',
-                    color: '#6C4C59',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 10px 24px rgba(230, 90, 132, 0.22)',
-                  }}
-                >
-                  <Ticket size={52} strokeWidth={2} />
-                </div>
-
-                <div style={{ textAlign: 'center' }}>
-                  <h2
-                    style={{
-                      fontFamily: 'var(--font-serif)',
-                      fontSize: '28px',
-                      fontWeight: 700,
-                      color: '#4A323E',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    Ticket Code
-                  </h2>
-                  <p style={{ fontSize: '15px', color: '#7E6673', margin: 0, lineHeight: 1.4, maxWidth: '260px' }}>
-                    Enter prepaid ticket voucher with on-screen keypad
-                  </p>
-                </div>
-              </div>
-
-              {/* Bottom Price Pill & Action */}
-              <div
-                style={{
-                  width: '100%',
-                  padding: '14px',
-                  borderRadius: '22px',
-                  backgroundColor: '#FFF0F5',
+                  width: '84px',
+                  height: '84px',
+                  borderRadius: '26px',
+                  backgroundColor: '#FFE4EE',
+                  color: '#6C4C59',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '8px',
-                  color: '#6C4C59',
-                  fontWeight: 700,
-                  fontSize: '16px',
+                  boxShadow: '0 8px 20px rgba(230, 90, 132, 0.2)',
                 }}
               >
-                <span>Enter Ticket Pass</span>
-                <ChevronRight size={20} strokeWidth={2.4} />
+                <Ticket size={46} strokeWidth={2} />
               </div>
+
+              {/* Title */}
+              <h2
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: '24px',
+                  fontWeight: 700,
+                  color: '#4A323E',
+                  margin: 0,
+                }}
+              >
+                Ticket Code
+              </h2>
             </button>
           </div>
         ) : step === 'qr-window' ? (
           /* ======================================================== */
-          /* WINDOW 2: SEPARATE QR WINDOW (Occupies Top & Bottom)     */
+          /* WINDOW 2: SEPARATE QR WINDOW                            */
           /* ======================================================== */
           <div
             style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: '32px',
-              border: 'none',
-              padding: '24px 32px',
-              boxShadow: '0 20px 48px rgba(108, 76, 89, 0.14)',
               textAlign: 'center',
               display: 'flex',
               flexDirection: 'column',
@@ -613,80 +529,52 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
               justifyContent: 'space-between',
               width: '100%',
               height: '100%',
+              padding: '8px 0',
             }}
           >
             {/* Header info */}
             <div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
-                <Smartphone size={22} color="#6C4C59" />
-                <span style={{ fontSize: '19px', fontWeight: 800, color: '#4A323E' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                <Smartphone size={24} color="#6C4C59" />
+                <span style={{ fontSize: '20px', fontWeight: 800, color: '#4A323E' }}>
                   Scan QR with Mobile App
                 </span>
               </div>
-              <p style={{ fontSize: '13px', color: '#8E7380', margin: 0 }}>
+              <p style={{ fontSize: '14px', color: '#7E6673', margin: 0, fontWeight: 500 }}>
                 Supports GCash, Maya, QRPh, Banking Apps & E-Wallets
               </p>
             </div>
 
-            {/* Stylized QR Code Graphic (Borderless) */}
+            {/* Actual Generated Payment QR Code Graphic (Card) */}
             <div
               style={{
                 position: 'relative',
                 padding: '16px',
-                backgroundColor: '#FFF9FB',
+                backgroundColor: '#FFFFFF',
                 border: 'none',
-                borderRadius: '24px',
-                boxShadow: '0 6px 20px rgba(108, 76, 89, 0.08)',
-                display: 'inline-block',
+                borderRadius: '26px',
+                boxShadow: '0 12px 36px rgba(108, 76, 89, 0.12)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '236px',
+                height: '236px',
               }}
             >
-              <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="200" height="200" rx="14" fill="#FFFFFF" />
-
-                {/* Corner Finder 1 */}
-                <rect x="15" y="15" width="50" height="50" rx="8" stroke="#4A323E" strokeWidth="6" />
-                <rect x="27" y="27" width="26" height="26" rx="4" fill="#6C4C59" />
-
-                {/* Corner Finder 2 */}
-                <rect x="135" y="15" width="50" height="50" rx="8" stroke="#4A323E" strokeWidth="6" />
-                <rect x="147" y="27" width="26" height="26" rx="4" fill="#6C4C59" />
-
-                {/* Corner Finder 3 */}
-                <rect x="15" y="135" width="50" height="50" rx="8" stroke="#4A323E" strokeWidth="6" />
-                <rect x="27" y="147" width="26" height="26" rx="4" fill="#6C4C59" />
-
-                {/* QR Grid Pattern */}
-                <rect x="75" y="20" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="95" y="20" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="115" y="20" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="75" y="40" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="105" y="40" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="20" y="75" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="40" y="75" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="75" y="75" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="115" y="75" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="140" y="75" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="165" y="75" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="20" y="95" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="50" y="95" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="135" y="95" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="165" y="95" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="20" y="115" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="75" y="115" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="95" y="115" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="140" y="115" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="75" y="140" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="105" y="140" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="135" y="140" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="165" y="140" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="75" y="165" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="95" y="165" width="12" height="12" rx="2" fill="#6C4C59" />
-                <rect x="145" y="165" width="12" height="12" rx="2" fill="#6C4C59" />
-
-                {/* Center Heart Emblem */}
-                <rect x="80" y="80" width="40" height="40" rx="8" fill="#FFF0F5" />
-                <path d="M100 106s-10-6.5-10-13a5 5 0 0 1 10-2 5 5 0 0 1 10 2c0 6.5-10 13-10 13z" fill="#E65A84" />
-              </svg>
+              {paymentQrDataUrl ? (
+                <img
+                  src={paymentQrDataUrl}
+                  alt="Payment QR Code"
+                  style={{
+                    width: '204px',
+                    height: '204px',
+                    borderRadius: '12px',
+                    display: 'block',
+                  }}
+                />
+              ) : (
+                <div style={{ fontSize: '13px', color: '#7E6673' }}>Generating QR...</div>
+              )}
 
               <div
                 style={{
@@ -702,84 +590,87 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                   alignItems: 'center',
                   gap: '4px',
                   boxShadow: '0 4px 10px rgba(108, 76, 89, 0.15)',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 <ShieldCheck size={14} color="#E65A84" />
-                <span style={{ fontSize: '11px', fontWeight: 800, color: '#6C4C59' }}>Secure Pay</span>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#6C4C59' }}>Secure QR Pay</span>
               </div>
             </div>
 
-            {/* Total Due Amount (Borderless) */}
+            {/* Total Due Amount */}
             <div
               style={{
-                backgroundColor: '#FFF7FA',
-                borderRadius: '20px',
+                backgroundColor: '#FFFFFF',
+                borderRadius: '24px',
                 border: 'none',
-                padding: '12px 24px',
+                padding: '16px 32px',
                 width: '100%',
-                maxWidth: '440px',
+                maxWidth: '480px',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                boxShadow: '0 2px 8px rgba(108, 76, 89, 0.05)',
+                boxShadow: '0 8px 24px rgba(108, 76, 89, 0.08)',
               }}
             >
-              <span style={{ fontSize: '14px', fontWeight: 600, color: '#7A5B69' }}>Total Amount Due:</span>
-              <span style={{ fontSize: '22px', fontWeight: 800, color: '#6C4C59' }}>{currentLayout.price}</span>
+              <span style={{ fontSize: '16px', fontWeight: 600, color: '#7A5B69' }}>Total Amount Due:</span>
+              <span style={{ fontSize: '26px', fontWeight: 800, color: '#6C4C59' }}>{currentLayout.price}</span>
             </div>
 
-            {/* Tap to Simulate Scan & Pay (Borderless) */}
+            {/* Tap to Simulate Scan & Pay Button (Bigger) */}
             <button
               onClick={handleSimulateQRPay}
               style={{
                 width: '100%',
-                maxWidth: '440px',
-                padding: '16px 24px',
+                maxWidth: '480px',
+                padding: '20px 32px',
                 backgroundColor: '#6C4C59',
                 color: '#FFFFFF',
                 border: 'none',
-                borderRadius: '28px',
+                borderRadius: '32px',
                 fontFamily: 'var(--font-serif)',
-                fontSize: '17px',
+                fontSize: '19px',
                 fontWeight: 700,
                 letterSpacing: '0.3px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px',
-                boxShadow: '0 10px 24px rgba(108, 76, 89, 0.35)',
+                gap: '10px',
+                boxShadow: '0 12px 28px rgba(108, 76, 89, 0.35)',
                 transition: 'background-color 0.2s, transform 0.15s',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#583D48')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#6C4C59')}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#583D48';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#6C4C59';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
               onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.97)')}
-              onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+              onMouseUp={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
             >
-              <Sparkles size={20} />
+              <Sparkles size={22} />
               <span>Simulate Scan & Confirm Pay</span>
             </button>
           </div>
         ) : (
           /* ======================================================== */
-          /* WINDOW 3: SEPARATE TICKET KEYPAD (Occupies Top & Bottom) */
+          /* WINDOW 3: SEPARATE TICKET KEYPAD                        */
           /* ======================================================== */
           <div
             style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: '32px',
-              border: 'none',
-              padding: '24px 32px',
-              boxShadow: '0 20px 48px rgba(108, 76, 89, 0.14)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'space-between',
               width: '100%',
               height: '100%',
+              padding: '6px 0',
             }}
           >
-            {/* Ticket Code Slots Display (Borderless) */}
+            {/* Ticket Code Slots Display (Extra Large Input) */}
             <div
               ref={ticketInputRef}
               style={{
@@ -787,17 +678,17 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                 textAlign: 'center',
               }}
             >
-              <div style={{ fontSize: '16px', fontWeight: 700, color: '#4A323E', marginBottom: '8px' }}>
+              <div style={{ fontSize: '20px', fontWeight: 700, color: '#4A323E', marginBottom: '10px' }}>
                 Enter Ticket Voucher Code
               </div>
 
-              {/* 6-Digit PIN Boxes (Borderless) */}
+              {/* 6-Digit PIN Boxes (Extra Large Size & Font) */}
               <div
                 style={{
                   display: 'flex',
                   justifyContent: 'center',
-                  gap: '10px',
-                  marginBottom: '4px',
+                  gap: '14px',
+                  marginBottom: '8px',
                 }}
               >
                 {[0, 1, 2, 3, 4, 5].map((idx) => {
@@ -808,23 +699,23 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                     <div
                       key={idx}
                       style={{
-                        width: '48px',
-                        height: '54px',
-                        borderRadius: '14px',
-                        backgroundColor: char ? '#FFF0F5' : '#FAF8FB',
+                        width: '78px',
+                        height: '88px',
+                        borderRadius: '22px',
+                        backgroundColor: '#FFFFFF',
                         border: 'none',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '24px',
+                        fontSize: '42px',
                         fontWeight: 800,
                         color: '#4A323E',
                         fontFamily: 'var(--font-mono)',
                         boxShadow: isActive
-                          ? '0 0 0 3px #6C4C59'
+                          ? '0 0 0 4px #6C4C59, 0 10px 28px rgba(108, 76, 89, 0.22)'
                           : char
-                          ? '0 3px 10px rgba(108, 76, 89, 0.12)'
-                          : 'inset 0 1px 3px rgba(0,0,0,0.04)',
+                          ? '0 8px 22px rgba(108, 76, 89, 0.15)'
+                          : '0 4px 16px rgba(108, 76, 89, 0.08)',
                         transition: 'all 0.15s ease',
                       }}
                     >
@@ -835,24 +726,24 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
               </div>
 
               {errorMsg ? (
-                <div style={{ fontSize: '12px', color: '#D32F2F', fontWeight: 700, marginTop: '2px' }}>
+                <div style={{ fontSize: '14px', color: '#D32F2F', fontWeight: 700, marginTop: '4px' }}>
                   {errorMsg}
                 </div>
               ) : (
-                <div style={{ fontSize: '12px', color: '#8E7380', marginTop: '2px' }}>
+                <div style={{ fontSize: '14px', color: '#8E7380', marginTop: '4px' }}>
                   Type your 6-digit voucher code using keypad below
                 </div>
               )}
             </div>
 
-            {/* ON-SCREEN KEYPAD (3x4 Grid, Borderless) */}
+            {/* ON-SCREEN KEYPAD (3x4 Grid, Bigger Buttons) */}
             <div
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(3, 1fr)',
                 gap: '12px',
                 width: '100%',
-                maxWidth: '360px',
+                maxWidth: '460px',
                 margin: 'auto 0',
               }}
             >
@@ -861,62 +752,76 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                   key={digit}
                   onClick={() => handleKeyPress(digit)}
                   style={{
-                    height: '52px',
-                    borderRadius: '16px',
+                    height: '62px',
+                    borderRadius: '20px',
                     border: 'none',
-                    backgroundColor: '#FFF8FA',
+                    backgroundColor: '#FFFFFF',
                     color: '#4A323E',
-                    fontSize: '22px',
+                    fontSize: '26px',
                     fontWeight: 700,
                     fontFamily: 'var(--font-mono)',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 3px 8px rgba(108, 76, 89, 0.08)',
-                    transition: 'all 0.1s ease',
+                    boxShadow: '0 5px 14px rgba(108, 76, 89, 0.09)',
+                    transition: 'all 0.12s ease',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#FFEAF2')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFF8FA')}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#FFF0F5';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 8px 20px rgba(108, 76, 89, 0.14)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#FFFFFF';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 5px 14px rgba(108, 76, 89, 0.09)';
+                  }}
                   onMouseDown={(e) => {
-                    e.currentTarget.style.transform = 'scale(0.92)';
-                    e.currentTarget.style.backgroundColor = '#F5CAD7';
+                    e.currentTarget.style.transform = 'scale(0.93)';
+                    e.currentTarget.style.backgroundColor = '#F8D2E1';
                   }}
                   onMouseUp={(e) => {
                     e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.backgroundColor = '#FFEAF2';
+                    e.currentTarget.style.backgroundColor = '#FFF0F5';
                   }}
                 >
                   {digit}
                 </button>
               ))}
 
-              {/* Clear Button */}
+              {/* Clear Button (Bigger) */}
               <button
                 onClick={handleClear}
                 title="Clear All"
                 style={{
-                  height: '52px',
-                  borderRadius: '16px',
+                  height: '62px',
+                  borderRadius: '20px',
                   border: 'none',
                   backgroundColor: '#FFF0F5',
                   color: '#8E7380',
-                  fontSize: '14px',
+                  fontSize: '16px',
                   fontWeight: 700,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '4px',
-                  boxShadow: '0 3px 8px rgba(108, 76, 89, 0.06)',
-                  transition: 'all 0.1s ease',
+                  gap: '6px',
+                  boxShadow: '0 5px 14px rgba(108, 76, 89, 0.06)',
+                  transition: 'all 0.12s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#FFE1EB')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFF0F5')}
-                onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.92)')}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#FFE4EE';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#FFF0F5';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+                onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.93)')}
                 onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
               >
-                <RotateCcw size={15} />
+                <RotateCcw size={18} />
                 <span>Clear</span>
               </button>
 
@@ -924,42 +829,50 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
               <button
                 onClick={() => handleKeyPress('0')}
                 style={{
-                  height: '52px',
-                  borderRadius: '16px',
+                  height: '62px',
+                  borderRadius: '20px',
                   border: 'none',
-                  backgroundColor: '#FFF8FA',
+                  backgroundColor: '#FFFFFF',
                   color: '#4A323E',
-                  fontSize: '22px',
+                  fontSize: '26px',
                   fontWeight: 700,
                   fontFamily: 'var(--font-mono)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: '0 3px 8px rgba(108, 76, 89, 0.08)',
-                  transition: 'all 0.1s ease',
+                  boxShadow: '0 5px 14px rgba(108, 76, 89, 0.09)',
+                  transition: 'all 0.12s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#FFEAF2')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFF8FA')}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#FFF0F5';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(108, 76, 89, 0.14)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#FFFFFF';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 5px 14px rgba(108, 76, 89, 0.09)';
+                }}
                 onMouseDown={(e) => {
-                  e.currentTarget.style.transform = 'scale(0.92)';
-                  e.currentTarget.style.backgroundColor = '#F5CAD7';
+                  e.currentTarget.style.transform = 'scale(0.93)';
+                  e.currentTarget.style.backgroundColor = '#F8D2E1';
                 }}
                 onMouseUp={(e) => {
                   e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.backgroundColor = '#FFEAF2';
+                  e.currentTarget.style.backgroundColor = '#FFF0F5';
                 }}
               >
                 0
               </button>
 
-              {/* Delete / Backspace */}
+              {/* Delete / Backspace (Bigger) */}
               <button
                 onClick={handleDelete}
                 title="Backspace"
                 style={{
-                  height: '52px',
-                  borderRadius: '16px',
+                  height: '62px',
+                  borderRadius: '20px',
                   border: 'none',
                   backgroundColor: '#FFF0F5',
                   color: '#8E7380',
@@ -967,46 +880,58 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: '0 3px 8px rgba(108, 76, 89, 0.06)',
-                  transition: 'all 0.1s ease',
+                  boxShadow: '0 5px 14px rgba(108, 76, 89, 0.06)',
+                  transition: 'all 0.12s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#FFE1EB')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFF0F5')}
-                onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.92)')}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#FFE4EE';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#FFF0F5';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+                onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.93)')}
                 onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
               >
-                <Delete size={22} />
+                <Delete size={24} />
               </button>
             </div>
 
-            {/* Redeem Ticket Button (Borderless) */}
+            {/* Redeem Ticket Button (Bigger) */}
             <button
               onClick={handleRedeemTicket}
               style={{
                 width: '100%',
-                maxWidth: '360px',
-                padding: '15px 24px',
+                maxWidth: '460px',
+                padding: '18px 32px',
                 backgroundColor: '#6C4C59',
                 color: '#FFFFFF',
                 border: 'none',
-                borderRadius: '28px',
+                borderRadius: '32px',
                 fontFamily: 'var(--font-serif)',
-                fontSize: '17px',
+                fontSize: '19px',
                 fontWeight: 700,
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px',
-                boxShadow: '0 10px 24px rgba(108, 76, 89, 0.35)',
+                gap: '10px',
+                boxShadow: '0 12px 28px rgba(108, 76, 89, 0.35)',
                 transition: 'background-color 0.2s, transform 0.15s',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#583D48')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#6C4C59')}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#583D48';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#6C4C59';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
               onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.97)')}
-              onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+              onMouseUp={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
             >
-              <Ticket size={20} />
+              <Ticket size={22} />
               <span>Redeem Ticket & Shoot</span>
             </button>
           </div>

@@ -18,10 +18,10 @@ interface LayoutItem {
 }
 
 const layouts: LayoutItem[] = [
-  { id: 'single', title: 'Single Solo', badge: '1 Shot', shotsCount: 1 },
-  { id: 'duo', title: 'Duo Strip', badge: '2 Shots', shotsCount: 2 },
-  { id: 'grid4', title: 'Classic Grid', badge: '4 Shots', shotsCount: 4 },
-  { id: 'strip6', title: 'Mega Strip', badge: '6 Shots', shotsCount: 6 },
+  { id: 'single', title: 'Single Solo', badge: '1 Shot • ₱35', shotsCount: 1 },
+  { id: 'duo', title: 'Duo Strip', badge: '2 Shots • ₱70', shotsCount: 2 },
+  { id: 'grid4', title: 'Classic Grid', badge: '4 Shots • ₱140', shotsCount: 4 },
+  { id: 'strip6', title: 'Mega Strip', badge: '6 Shots • ₱210', shotsCount: 6 },
 ];
 
 export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
@@ -76,7 +76,7 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
     });
   };
 
-  // Render photo preview slots according to layout geometry
+  // Render photo preview slots according to Polaroid layout geometry
   const renderPhotoSlots = (id: LayoutId, isSelected: boolean) => {
     const slotColor = isSelected ? '#FFDDE9' : '#ECEBF6';
 
@@ -85,22 +85,41 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
         return (
           <div
             style={{
-              width: '74px',
-              height: '98px',
-              backgroundColor: slotColor,
-              borderRadius: '8px',
-              boxShadow: isSelected ? '0 2px 8px rgba(230, 90, 132, 0.15)' : 'none',
-              transition: 'background-color 0.3s ease',
+              width: '82px',
+              backgroundColor: '#FFFFFF',
+              borderRadius: '0px',
+              padding: '6px 6px 14px 6px',
+              boxShadow: isSelected
+                ? '0 6px 16px rgba(108, 76, 89, 0.22)'
+                : '0 3px 10px rgba(108, 76, 89, 0.1)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
             }}
-          />
+          >
+            <div
+              style={{
+                width: '70px',
+                height: '74px',
+                backgroundColor: slotColor,
+                borderRadius: '0px',
+                transition: 'background-color 0.3s ease',
+              }}
+            />
+          </div>
         );
 
       case 'duo':
         return (
           <div
             style={{
-              width: '46px',
-              height: '98px',
+              width: '56px',
+              backgroundColor: '#FFFFFF',
+              borderRadius: '0px',
+              padding: '5px 5px 14px 5px',
+              boxShadow: isSelected
+                ? '0 6px 16px rgba(108, 76, 89, 0.22)'
+                : '0 3px 10px rgba(108, 76, 89, 0.1)',
               display: 'flex',
               flexDirection: 'column',
               gap: '4px',
@@ -108,17 +127,19 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
           >
             <div
               style={{
-                flex: 1,
+                width: '46px',
+                height: '38px',
                 backgroundColor: slotColor,
-                borderRadius: '6px',
+                borderRadius: '0px',
                 transition: 'background-color 0.3s ease',
               }}
             />
             <div
               style={{
-                flex: 1,
+                width: '46px',
+                height: '38px',
                 backgroundColor: slotColor,
-                borderRadius: '6px',
+                borderRadius: '0px',
                 transition: 'background-color 0.3s ease',
               }}
             />
@@ -129,8 +150,13 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
         return (
           <div
             style={{
-              width: '78px',
-              height: '78px',
+              width: '84px',
+              backgroundColor: '#FFFFFF',
+              borderRadius: '0px',
+              padding: '6px 6px 14px 6px',
+              boxShadow: isSelected
+                ? '0 6px 16px rgba(108, 76, 89, 0.22)'
+                : '0 3px 10px rgba(108, 76, 89, 0.1)',
               display: 'grid',
               gridTemplateColumns: '1fr 1fr',
               gridTemplateRows: '1fr 1fr',
@@ -141,8 +167,10 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
               <div
                 key={idx}
                 style={{
+                  width: '34px',
+                  height: '34px',
                   backgroundColor: slotColor,
-                  borderRadius: '4px',
+                  borderRadius: '0px',
                   transition: 'background-color 0.3s ease',
                 }}
               />
@@ -154,20 +182,26 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
         return (
           <div
             style={{
-              width: '46px',
-              height: '100px',
+              width: '50px',
+              backgroundColor: '#FFFFFF',
+              borderRadius: '0px',
+              padding: '4px 4px 12px 4px',
+              boxShadow: isSelected
+                ? '0 6px 16px rgba(108, 76, 89, 0.22)'
+                : '0 3px 10px rgba(108, 76, 89, 0.1)',
               display: 'flex',
               flexDirection: 'column',
-              gap: '3px',
+              gap: '2px',
             }}
           >
             {[0, 1, 2, 3, 4, 5].map((idx) => (
               <div
                 key={idx}
                 style={{
-                  flex: 1,
+                  width: '42px',
+                  height: '13px',
                   backgroundColor: slotColor,
-                  borderRadius: '3px',
+                  borderRadius: '0px',
                   transition: 'background-color 0.3s ease',
                 }}
               />
@@ -226,31 +260,29 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
             }}
             title="Back to Home"
             style={{
+              width: '42px',
+              height: '42px',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
+              justifyContent: 'center',
               backgroundColor: '#FFFFFF',
-              border: '1.5px solid #F5CAD7',
-              borderRadius: '24px',
-              padding: '8px 16px',
+              border: 'none',
+              borderRadius: '50%',
               cursor: 'pointer',
               color: '#6C4C59',
-              fontSize: '14px',
-              fontWeight: 700,
-              boxShadow: '0 4px 10px rgba(220, 130, 160, 0.15)',
+              boxShadow: '0 4px 14px rgba(108, 76, 89, 0.12)',
               transition: 'background-color 0.2s, transform 0.15s',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = '#FFF0F5';
-              e.currentTarget.style.transform = 'translateX(-2px)';
+              e.currentTarget.style.transform = 'translateX(-3px)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = '#FFFFFF';
               e.currentTarget.style.transform = 'translateX(0)';
             }}
           >
-            <ArrowLeft size={18} strokeWidth={2.2} />
-            <span>Back</span>
+            <ArrowLeft size={22} strokeWidth={2.2} />
           </button>
 
           {/* Title: Choose Your Layout */}
@@ -310,7 +342,7 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Heart size={14} color="#6C4C59" fill="#6C4C59" strokeWidth={1.5} />
             <span style={{ fontSize: '13px', color: '#7E6673', fontWeight: 600 }}>
-              Tap any shot option to proceed to payment
+              ₱35 per shot • Tap any layout to proceed to payment
             </span>
             <Heart size={14} color="#6C4C59" fill="#6C4C59" strokeWidth={1.5} />
           </div>

@@ -47,10 +47,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   if (!isOpen) return null;
 
   const layoutNames: Record<LayoutId, { title: string; shots: string; price: string }> = {
-    single: { title: 'Single Solo', shots: '1 Shot', price: '$2.00' },
-    duo: { title: 'Duo Strip', shots: '2 Shots', price: '$3.50' },
-    grid4: { title: 'Classic Grid', shots: '4 Shots', price: '$5.00' },
-    strip6: { title: 'Mega Strip', shots: '6 Shots', price: '$6.00' },
+    single: { title: 'Single Solo', shots: '1 Shot', price: '₱35.00' },
+    duo: { title: 'Duo Strip', shots: '2 Shots', price: '₱70.00' },
+    grid4: { title: 'Classic Grid', shots: '4 Shots', price: '₱140.00' },
+    strip6: { title: 'Mega Strip', shots: '6 Shots', price: '₱210.00' },
   };
 
   const currentLayout = layoutNames[selectedLayout];
