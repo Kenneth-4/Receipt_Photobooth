@@ -174,6 +174,28 @@ export const CameraScreen: React.FC<CameraScreenProps> = ({ layout, onBack, onHo
     });
   };
 
+  // Helper to upload temporary photo for cross-device QR scanning
+  const uploadTemporaryPhoto = async (dataUrl: string): Promise<string | null> => {
+    try {
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      const formData = new FormData();
+      formData.append('file', blob, `photobooth-${Date.now()}.png`);
+
+      const uploadRes = await fetch('https://tmpfiles.org/api/v1/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const json = await uploadRes.json();
+      if (json?.data?.url) {
+        return json.data.url.replace('tmpfiles.org/', 'tmpfiles.org/dl/');
+      }
+    } catch {
+      // Fallback
+    }
+    return null;
+  };
+
   // Generate soft copy URL and actual scannable QR Code when photo sequence finishes
   useEffect(() => {
     if (photos.length === totalShots && totalShots > 0) {
@@ -186,10 +208,11 @@ export const CameraScreen: React.FC<CameraScreenProps> = ({ layout, onBack, onHo
           // localStorage fallback
         }
 
-        const downloadUrl = `${window.location.origin}${window.location.pathname}?download=true`;
+        const baseDownloadUrl = `${window.location.origin}${window.location.pathname}?download=true`;
 
+        // 1. Instantly generate initial QR code
         try {
-          const qr = await QRCode.toDataURL(downloadUrl, {
+          const qr = await QRCode.toDataURL(baseDownloadUrl, {
             width: 260,
             margin: 1,
             color: {
@@ -199,8 +222,28 @@ export const CameraScreen: React.FC<CameraScreenProps> = ({ layout, onBack, onHo
           });
           setQrCodeDataUrl(qr);
         } catch (err) {
-          console.error('Failed to generate actual QR code', err);
+          console.error('Failed to generate initial QR code', err);
         }
+
+        // 2. Upload photo in background for cross-device mobile scanning
+        uploadTemporaryPhoto(dataUrl).then(async (remoteUrl) => {
+          if (remoteUrl) {
+            const crossDeviceUrl = `${window.location.origin}${window.location.pathname}?download=true&photo=${encodeURIComponent(remoteUrl)}`;
+            try {
+              const crossQr = await QRCode.toDataURL(crossDeviceUrl, {
+                width: 260,
+                margin: 1,
+                color: {
+                  dark: '#4A323E',
+                  light: '#FFFFFF',
+                },
+              });
+              setQrCodeDataUrl(crossQr);
+            } catch {
+              // keep existing
+            }
+          }
+        });
       });
     }
   }, [photos, totalShots, layout]);

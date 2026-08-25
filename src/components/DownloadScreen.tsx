@@ -14,8 +14,14 @@ export const DownloadScreen: React.FC = () => {
   const stickersRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem('photobooth_download_photo') || '';
-    setPhotoUrl(saved);
+    const params = new URLSearchParams(window.location.search);
+    const remote = params.get('photo');
+    if (remote) {
+      setPhotoUrl(decodeURIComponent(remote));
+    } else {
+      const saved = localStorage.getItem('photobooth_download_photo') || '';
+      setPhotoUrl(saved);
+    }
 
     if (stickersRef.current) {
       anime({
@@ -33,14 +39,31 @@ export const DownloadScreen: React.FC = () => {
     }
   }, []);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!photoUrl) return;
-    const a = document.createElement('a');
-    a.href = photoUrl;
-    a.download = `photobooth-polaroid-${Date.now()}.png`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    try {
+      if (photoUrl.startsWith('data:')) {
+        const a = document.createElement('a');
+        a.href = photoUrl;
+        a.download = `sweet-memories-polaroid-${Date.now()}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        const res = await fetch(photoUrl);
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = `sweet-memories-polaroid-${Date.now()}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+      }
+    } catch {
+      window.open(photoUrl, '_blank');
+    }
   };
 
   return (
