@@ -18,6 +18,13 @@ import {
 import type { LayoutId } from '../types';
 import { playCutePop, playChime } from '../utils/sound';
 import { HelpModal } from './HelpModal';
+import {
+  HelloKittyIcon,
+  CuteBowIcon,
+  CuteStrawberryIcon,
+  CuteFlowerIcon,
+  CuteSparkle,
+} from './KawaiiIcons';
 
 interface PaymentScreenProps {
   selectedLayout: LayoutId;
@@ -42,6 +49,25 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const mainContentRef = useRef<HTMLDivElement>(null);
   const ticketInputRef = useRef<HTMLDivElement>(null);
+  const stickersRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Floating Kawaii Stickers animation for Payment screen
+    if (stickersRef.current) {
+      anime({
+        targets: stickersRef.current.querySelectorAll('.float-kawaii-payment'),
+        translateY: () => anime.random(-15, 15),
+        translateX: () => anime.random(-12, 12),
+        rotate: () => anime.random(-10, 10),
+        scale: [0.9, 1.1],
+        delay: anime.stagger(170),
+        duration: 3500,
+        direction: 'alternate',
+        loop: true,
+        easing: 'easeInOutQuad',
+      });
+    }
+  }, []);
 
   const layoutDetails: Record<
     LayoutId,
@@ -185,8 +211,45 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
         overflow: 'hidden',
       }}
     >
+      {/* Floating Kawaii Stickers (Payment Screen unique arrangement) */}
+      <div ref={stickersRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}>
+        {/* Top Left: Cute Blossom Flower */}
+        <div className="float-kawaii-payment" style={{ position: 'absolute', top: '5%', left: '7%', filter: 'drop-shadow(0 4px 10px rgba(255, 179, 198, 0.3))' }}>
+          <CuteFlowerIcon size={38} color="#FF94B8" />
+        </div>
+
+        {/* Top Right: Cute Strawberry */}
+        <div className="float-kawaii-payment" style={{ position: 'absolute', top: '6%', right: '7%', filter: 'drop-shadow(0 4px 10px rgba(255, 77, 109, 0.28))' }}>
+          <CuteStrawberryIcon size={36} />
+        </div>
+
+        {/* Mid Left: Hello Kitty Face */}
+        <div className="float-kawaii-payment" style={{ position: 'absolute', top: '42%', left: '3%', filter: 'drop-shadow(0 4px 12px rgba(230, 90, 132, 0.25))' }}>
+          <HelloKittyIcon size={48} />
+        </div>
+
+        {/* Mid Right: Cute Ribbon Bow */}
+        <div className="float-kawaii-payment" style={{ position: 'absolute', top: '45%', right: '3%', filter: 'drop-shadow(0 4px 10px rgba(255, 82, 123, 0.3))' }}>
+          <CuteBowIcon size={40} color="#FF3366" />
+        </div>
+
+        {/* Bottom Left: Cute Ribbon Bow */}
+        <div className="float-kawaii-payment" style={{ position: 'absolute', bottom: '6%', left: '6%', filter: 'drop-shadow(0 4px 10px rgba(255, 82, 123, 0.3))' }}>
+          <CuteBowIcon size={34} color="#FF8CA9" />
+        </div>
+
+        {/* Bottom Right: Hello Kitty Face */}
+        <div className="float-kawaii-payment" style={{ position: 'absolute', bottom: '6%', right: '6%', filter: 'drop-shadow(0 4px 12px rgba(230, 90, 132, 0.25))' }}>
+          <HelloKittyIcon size={42} />
+        </div>
+
+        {/* Sparkles */}
+        <CuteSparkle className="float-kawaii-payment" size={22} color="#FFA8C5" style={{ position: 'absolute', top: '22%', left: '16%' }} />
+        <CuteSparkle className="float-kawaii-payment" size={20} color="#FF70A6" style={{ position: 'absolute', bottom: '24%', right: '14%' }} />
+      </div>
+
       {/* Top Header Navigation (Completely Borderless) */}
-      <div className="payment-header-anim" style={{ width: '100%', marginBottom: '12px', flexShrink: 0 }}>
+      <div className="payment-header-anim" style={{ width: '100%', marginBottom: '12px', flexShrink: 0, zIndex: 2 }}>
         <div
           style={{
             display: 'flex',

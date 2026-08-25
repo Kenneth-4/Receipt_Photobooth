@@ -5,6 +5,13 @@ import QRCode from 'qrcode';
 import { Camera, Printer, ArrowLeft, ExternalLink } from 'lucide-react';
 import type { LayoutId } from '../types';
 import { playCutePop, playPaperSwoosh, playChime } from '../utils/sound';
+import {
+  HelloKittyIcon,
+  CuteBowIcon,
+  CuteStrawberryIcon,
+  CuteFlowerIcon,
+  CuteSparkle,
+} from './KawaiiIcons';
 
 interface CameraScreenProps {
   layout: LayoutId;
@@ -27,6 +34,25 @@ export const CameraScreen: React.FC<CameraScreenProps> = ({ layout, onBack, onHo
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const printedReceiptRef = useRef<HTMLDivElement>(null);
   const flashOverlayRef = useRef<HTMLDivElement>(null);
+  const stickersRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Floating Kawaii Stickers animation for Camera screen
+    if (stickersRef.current) {
+      anime({
+        targets: stickersRef.current.querySelectorAll('.float-kawaii-camera'),
+        translateY: () => anime.random(-14, 14),
+        translateX: () => anime.random(-10, 10),
+        rotate: () => anime.random(-10, 10),
+        scale: [0.92, 1.1],
+        delay: anime.stagger(150),
+        duration: 3300,
+        direction: 'alternate',
+        loop: true,
+        easing: 'easeInOutQuad',
+      });
+    }
+  }, []);
 
   const shotCounts: Record<LayoutId, number> = {
     single: 1,
@@ -395,9 +421,47 @@ export const CameraScreen: React.FC<CameraScreenProps> = ({ layout, onBack, onHo
         padding: '16px 20px',
         position: 'relative',
         overflowY: 'auto',
+        overflowX: 'hidden',
       }}
     >
       <canvas ref={canvasRef} style={{ display: 'none' }} />
+
+      {/* Floating Kawaii Stickers (Camera Screen unique arrangement) */}
+      <div ref={stickersRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}>
+        {/* Top Left: Cute Strawberry */}
+        <div className="float-kawaii-camera" style={{ position: 'absolute', top: '4%', left: '7%', filter: 'drop-shadow(0 4px 10px rgba(255, 77, 109, 0.28))' }}>
+          <CuteStrawberryIcon size={34} />
+        </div>
+
+        {/* Top Right: Cute Blossom Flower */}
+        <div className="float-kawaii-camera" style={{ position: 'absolute', top: '4%', right: '7%', filter: 'drop-shadow(0 4px 10px rgba(255, 179, 198, 0.3))' }}>
+          <CuteFlowerIcon size={36} color="#FFAEC9" />
+        </div>
+
+        {/* Mid Left: Cute Ribbon Bow */}
+        <div className="float-kawaii-camera" style={{ position: 'absolute', top: '50%', left: '2%', filter: 'drop-shadow(0 4px 10px rgba(255, 82, 123, 0.3))' }}>
+          <CuteBowIcon size={38} color="#FF4081" />
+        </div>
+
+        {/* Mid Right: Hello Kitty Face */}
+        <div className="float-kawaii-camera" style={{ position: 'absolute', top: '48%', right: '2%', filter: 'drop-shadow(0 4px 12px rgba(230, 90, 132, 0.25))' }}>
+          <HelloKittyIcon size={46} />
+        </div>
+
+        {/* Bottom Left: Hello Kitty Face */}
+        <div className="float-kawaii-camera" style={{ position: 'absolute', bottom: '4%', left: '5%', filter: 'drop-shadow(0 4px 12px rgba(230, 90, 132, 0.25))' }}>
+          <HelloKittyIcon size={40} />
+        </div>
+
+        {/* Bottom Right: Cute Strawberry */}
+        <div className="float-kawaii-camera" style={{ position: 'absolute', bottom: '5%', right: '5%', filter: 'drop-shadow(0 4px 10px rgba(255, 77, 109, 0.28))' }}>
+          <CuteStrawberryIcon size={30} />
+        </div>
+
+        {/* Sparkles */}
+        <CuteSparkle className="float-kawaii-camera" size={20} color="#FFA8C5" style={{ position: 'absolute', top: '18%', right: '15%' }} />
+        <CuteSparkle className="float-kawaii-camera" size={22} color="#FF7096" style={{ position: 'absolute', bottom: '20%', left: '12%' }} />
+      </div>
 
       {/* White Flash overlay on snapshot */}
       <div
@@ -419,6 +483,7 @@ export const CameraScreen: React.FC<CameraScreenProps> = ({ layout, onBack, onHo
           alignItems: 'center',
           justifyContent: 'space-between',
           marginBottom: '8px',
+          zIndex: 2,
         }}
       >
         <button

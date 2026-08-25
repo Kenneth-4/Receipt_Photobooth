@@ -1,12 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import anime from 'animejs';
 import { Download, Heart, ArrowLeft } from 'lucide-react';
+import {
+  HelloKittyIcon,
+  CuteBowIcon,
+  CuteStrawberryIcon,
+  CuteFlowerIcon,
+  CuteSparkle,
+} from './KawaiiIcons';
 
 export const DownloadScreen: React.FC = () => {
   const [photoUrl, setPhotoUrl] = useState<string>('');
+  const stickersRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem('photobooth_download_photo') || '';
     setPhotoUrl(saved);
+
+    if (stickersRef.current) {
+      anime({
+        targets: stickersRef.current.querySelectorAll('.float-kawaii-dl'),
+        translateY: () => anime.random(-14, 14),
+        translateX: () => anime.random(-10, 10),
+        rotate: () => anime.random(-12, 12),
+        scale: [0.92, 1.1],
+        delay: anime.stagger(150),
+        duration: 3300,
+        direction: 'alternate',
+        loop: true,
+        easing: 'easeInOutQuad',
+      });
+    }
   }, []);
 
   const handleDownload = () => {
@@ -32,8 +56,37 @@ export const DownloadScreen: React.FC = () => {
         padding: '24px 16px',
         boxSizing: 'border-box',
         overflowY: 'auto',
+        position: 'relative',
+        overflowX: 'hidden',
       }}
     >
+      {/* Floating Kawaii Stickers (Download Screen unique arrangement) */}
+      <div ref={stickersRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}>
+        {/* Top Left: Hello Kitty Face */}
+        <div className="float-kawaii-dl" style={{ position: 'absolute', top: '6%', left: '7%', filter: 'drop-shadow(0 4px 12px rgba(230, 90, 132, 0.25))' }}>
+          <HelloKittyIcon size={46} />
+        </div>
+
+        {/* Top Right: Cute Ribbon Bow */}
+        <div className="float-kawaii-dl" style={{ position: 'absolute', top: '7%', right: '8%', filter: 'drop-shadow(0 4px 10px rgba(255, 82, 123, 0.3))' }}>
+          <CuteBowIcon size={38} color="#FF4B72" />
+        </div>
+
+        {/* Bottom Left: Kawaii Strawberry */}
+        <div className="float-kawaii-dl" style={{ position: 'absolute', bottom: '6%', left: '7%', filter: 'drop-shadow(0 4px 10px rgba(255, 77, 109, 0.28))' }}>
+          <CuteStrawberryIcon size={34} />
+        </div>
+
+        {/* Bottom Right: Cute Blossom Flower */}
+        <div className="float-kawaii-dl" style={{ position: 'absolute', bottom: '6%', right: '7%', filter: 'drop-shadow(0 4px 10px rgba(255, 179, 198, 0.3))' }}>
+          <CuteFlowerIcon size={36} color="#FFAEC9" />
+        </div>
+
+        {/* Sparkles */}
+        <CuteSparkle className="float-kawaii-dl" size={22} color="#FF94B8" style={{ position: 'absolute', top: '35%', left: '6%' }} />
+        <CuteSparkle className="float-kawaii-dl" size={20} color="#FFA8C5" style={{ position: 'absolute', top: '40%', right: '6%' }} />
+      </div>
+
       <div
         style={{
           display: 'flex',
@@ -43,6 +96,7 @@ export const DownloadScreen: React.FC = () => {
           maxWidth: '500px',
           width: '100%',
           textAlign: 'center',
+          zIndex: 2,
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

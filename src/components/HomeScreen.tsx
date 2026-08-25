@@ -1,7 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import anime from 'animejs';
-import { Camera, Sparkles, Heart, Star, Disc, ArrowDown } from 'lucide-react';
+import { Camera, Sparkles, Heart, Star, ArrowDown } from 'lucide-react';
 import { playPaperSwoosh, playCutePop } from '../utils/sound';
+import {
+  HelloKittyIcon,
+  CuteBowIcon,
+  CuteStrawberryIcon,
+  CuteFlowerIcon,
+  CuteSparkle,
+} from './KawaiiIcons';
 
 interface HomeScreenProps {
   onStart: () => void;
@@ -10,7 +17,7 @@ interface HomeScreenProps {
 export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart }) => {
   const receiptRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const sparklesRef = useRef<HTMLDivElement>(null);
+  const stickersRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Initial entrance animation with anime.js
@@ -28,7 +35,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart }) => {
       anime({
         targets: receiptRef.current,
         translateY: [0, -8, 0],
-        rotate: [-0.5, 0.5, -0.5],
+        rotate: [-0.6, 0.6, -0.6],
         duration: 4000,
         direction: 'alternate',
         loop: true,
@@ -36,16 +43,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart }) => {
       });
     }
 
-    // Sparkles floating animation
-    if (sparklesRef.current) {
+    // Floating Kawaii Stickers animation
+    if (stickersRef.current) {
       anime({
-        targets: sparklesRef.current.querySelectorAll('.float-star'),
-        translateY: () => anime.random(-15, 15),
-        translateX: () => anime.random(-10, 10),
-        scale: [0.8, 1.2],
-        opacity: [0.4, 0.9],
-        delay: anime.stagger(200),
-        duration: 3000,
+        targets: stickersRef.current.querySelectorAll('.float-kawaii'),
+        translateY: () => anime.random(-16, 16),
+        translateX: () => anime.random(-12, 12),
+        rotate: () => anime.random(-12, 12),
+        scale: [0.9, 1.12],
+        delay: anime.stagger(180),
+        duration: 3200,
         direction: 'alternate',
         loop: true,
         easing: 'easeInOutQuad',
@@ -92,60 +99,79 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart }) => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '24px 20px 20px 20px',
+        padding: '18px 20px',
         position: 'relative',
+        overflow: 'hidden',
       }}
     >
-      {/* Floating Background Stars & Doodles */}
-      <div ref={sparklesRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-        <Star className="float-star" size={24} style={{ position: 'absolute', top: '12%', left: '8%', color: '#FFAEC9', fill: '#FFAEC9' }} />
-        <Heart className="float-star" size={20} style={{ position: 'absolute', top: '22%', right: '10%', color: '#FF94B8', fill: '#FF94B8' }} />
-        <Star className="float-star" size={18} style={{ position: 'absolute', bottom: '18%', left: '10%', color: '#FFB8D1', fill: '#FFB8D1' }} />
-        <Sparkles className="float-star" size={26} style={{ position: 'absolute', bottom: '15%', right: '8%', color: '#FFAEC9' }} />
-        <Heart className="float-star" size={16} style={{ position: 'absolute', top: '45%', left: '4%', color: '#FFCADB', fill: '#FFCADB' }} />
+      {/* Floating Kawaii Stickers & Mascots Background */}
+      <div ref={stickersRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}>
+        {/* Top Left: Hello Kitty Mascot */}
+        <div className="float-kawaii" style={{ position: 'absolute', top: '7%', left: '7%', filter: 'drop-shadow(0 6px 14px rgba(230, 90, 132, 0.25))' }}>
+          <HelloKittyIcon size={52} />
+        </div>
+
+        {/* Top Right: Cute Ribbon Bow */}
+        <div className="float-kawaii" style={{ position: 'absolute', top: '10%', right: '8%', filter: 'drop-shadow(0 4px 10px rgba(255, 82, 123, 0.3))' }}>
+          <CuteBowIcon size={40} color="#FF4B72" />
+        </div>
+
+        {/* Mid Left: Kawaii Strawberry */}
+        <div className="float-kawaii" style={{ position: 'absolute', top: '44%', left: '4%', filter: 'drop-shadow(0 4px 10px rgba(255, 77, 109, 0.25))' }}>
+          <CuteStrawberryIcon size={34} />
+        </div>
+
+        {/* Mid Right: Hello Kitty Face */}
+        <div className="float-kawaii" style={{ position: 'absolute', top: '48%', right: '5%', filter: 'drop-shadow(0 6px 14px rgba(230, 90, 132, 0.25))' }}>
+          <HelloKittyIcon size={46} />
+        </div>
+
+        {/* Bottom Left: Cute Blossom Flower */}
+        <div className="float-kawaii" style={{ position: 'absolute', bottom: '12%', left: '9%', filter: 'drop-shadow(0 4px 10px rgba(255, 179, 198, 0.3))' }}>
+          <CuteFlowerIcon size={36} color="#FFAEC9" />
+        </div>
+
+        {/* Bottom Right: Cute Ribbon Bow */}
+        <div className="float-kawaii" style={{ position: 'absolute', bottom: '14%', right: '9%', filter: 'drop-shadow(0 4px 10px rgba(255, 82, 123, 0.3))' }}>
+          <CuteBowIcon size={36} color="#FF6584" />
+        </div>
+
+        {/* Additional Cute Sparkles */}
+        <CuteSparkle className="float-kawaii" size={24} color="#FF94B8" style={{ position: 'absolute', top: '26%', left: '16%' }} />
+        <CuteSparkle className="float-kawaii" size={20} color="#FFA8C5" style={{ position: 'absolute', top: '22%', right: '22%' }} />
+        <Star className="float-kawaii" size={20} style={{ position: 'absolute', bottom: '28%', right: '14%', color: '#FFD166', fill: '#FFD166' }} />
+        <Heart className="float-kawaii" size={22} style={{ position: 'absolute', bottom: '26%', left: '15%', color: '#FF70A6', fill: '#FF70A6' }} />
       </div>
 
-      {/* Kiosk Header */}
-      <div style={{ textAlign: 'center', zIndex: 2, marginTop: '8px' }}>
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            backgroundColor: '#FFFFFF',
-            padding: '6px 18px',
-            borderRadius: '24px',
-            boxShadow: '0 4px 14px rgba(220, 130, 160, 0.2)',
-            marginBottom: '10px',
-          }}
-        >
-          <Camera size={18} color="#6C4C59" />
-          <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', color: '#6C4C59', textTransform: 'uppercase' }}>
-            Kiosk Photobooth
-          </span>
-          <Sparkles size={16} color="#E65A84" />
-        </div>
+      {/* Kawaii Kiosk Header */}
+      <div style={{ textAlign: 'center', zIndex: 3, marginTop: '4px' }}>
 
         <h1
           style={{
             fontFamily: 'var(--font-serif)',
-            fontSize: '32px',
+            fontSize: '34px',
             fontStyle: 'italic',
             fontWeight: 700,
             color: '#4A323E',
             letterSpacing: '0.5px',
             lineHeight: 1.15,
-            textShadow: '0 2px 8px rgba(255, 255, 255, 0.8)',
+            textShadow: '0 2px 10px rgba(255, 255, 255, 0.9)',
+            margin: '2px 0',
           }}
         >
-          Receipt Photobooth
+          Sweet Memories Studio
         </h1>
-        <p style={{ fontSize: '13px', color: '#8E7380', marginTop: '4px', fontWeight: 500 }}>
-          Tap the receipt below to begin your session ♡
-        </p>
+
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+          <span style={{ fontSize: '13px', fontWeight: 700, color: '#E65A84' }}>₱35 PER SHOT</span>
+          <span style={{ color: '#C8A2B5' }}>•</span>
+          <span style={{ fontSize: '13px', color: '#7E6673', fontWeight: 600 }}>
+            Touch the ticket to capture sweet moments ♡
+          </span>
+        </div>
       </div>
 
-      {/* Printer Slot & Realistic Animated Receipt */}
+      {/* Printer Slot & Kawaii Clickable Receipt */}
       <div
         style={{
           width: '100%',
@@ -157,14 +183,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart }) => {
           margin: 'auto 0',
         }}
       >
-        {/* Cute Metallic Dispenser Slot */}
+        {/* Cute Metallic Dispenser Slot with Bow */}
         <div
           style={{
-            width: '280px',
-            height: '14px',
+            width: '290px',
+            height: '16px',
             backgroundColor: '#6C4C59',
-            borderRadius: '8px',
-            boxShadow: 'inset 0 4px 6px rgba(0,0,0,0.4), 0 4px 10px rgba(108, 76, 89, 0.25)',
+            borderRadius: '10px',
+            boxShadow: 'inset 0 4px 6px rgba(0,0,0,0.35), 0 6px 14px rgba(108, 76, 89, 0.25)',
             position: 'relative',
             zIndex: 4,
             display: 'flex',
@@ -172,22 +198,39 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart }) => {
             alignItems: 'center',
           }}
         >
-          <div style={{ width: '220px', height: '4px', backgroundColor: '#2E1E26', borderRadius: '4px' }} />
+          <div style={{ width: '230px', height: '4px', backgroundColor: '#26171F', borderRadius: '4px' }} />
+
+          {/* Mini Center Bow Badge on Slot */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '-10px',
+              backgroundColor: '#FFFFFF',
+              borderRadius: '50%',
+              padding: '3px',
+              boxShadow: '0 2px 8px rgba(108, 76, 89, 0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <CuteBowIcon size={20} color="#FF4B72" />
+          </div>
         </div>
 
-        {/* The Clickable Receipt Card */}
+        {/* The Clickable Kawaii Receipt Card */}
         <div
           ref={receiptRef}
           onClick={handleReceiptClick}
           role="button"
           tabIndex={0}
           style={{
-            width: '270px',
+            width: '280px',
             backgroundColor: '#FFFFFF',
-            borderRadius: '0 0 4px 4px',
-            boxShadow: '0 16px 36px rgba(108, 76, 89, 0.22), 0 4px 12px rgba(0, 0, 0, 0.06)',
+            borderRadius: '0 0 8px 8px',
+            boxShadow: '0 20px 48px rgba(108, 76, 89, 0.22), 0 4px 14px rgba(0, 0, 0, 0.06)',
             cursor: 'pointer',
-            padding: '20px 18px 26px 18px',
+            padding: '18px 18px 24px 18px',
             marginTop: '-4px',
             position: 'relative',
             transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
@@ -201,73 +244,81 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart }) => {
             e.currentTarget.style.transform = 'translateY(0px) scale(1)';
           }}
         >
-          {/* Top receipt punch holes / perforation line */}
+          {/* Top receipt mascot & perforation line */}
           <div
             style={{
-              borderBottom: '2px dashed #E0D4DC',
-              paddingBottom: '12px',
-              marginBottom: '14px',
+              borderBottom: '2px dashed #F0DCE5',
+              paddingBottom: '10px',
+              marginBottom: '12px',
               textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-              <Heart size={14} color="#6C4C59" fill="#6C4C59" />
-              <span style={{ fontSize: '13px', fontWeight: 800, letterSpacing: '1px', color: '#4A323E' }}>
-                SWEET PHOTO STUDIO
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
+              <HelloKittyIcon size={28} />
+              <span style={{ fontSize: '13px', fontWeight: 800, letterSpacing: '0.8px', color: '#4A323E' }}>
+                HELLO KITTY & FRIENDS
               </span>
-              <Heart size={14} color="#6C4C59" fill="#6C4C59" />
+              <CuteBowIcon size={20} color="#FF4B72" />
             </div>
-            <div style={{ fontSize: '9px', color: '#8E7380', letterSpacing: '1px' }}>
-              ✦ SPECIAL EDITION PHOTO STRIP ✦
+            <div style={{ fontSize: '9px', color: '#E65A84', letterSpacing: '1px', fontWeight: 700 }}>
+              ✦ OFFICIAL PHOTO PASS • ₱35 / SHOT ✦
             </div>
           </div>
 
-          {/* Ticket Body Details */}
-          <div style={{ fontSize: '10px', color: '#5A4650', lineHeight: 1.6, marginBottom: '14px' }}>
+          {/* Ticket Metadata */}
+          <div style={{ fontSize: '10px', color: '#6A4D5C', lineHeight: 1.6, marginBottom: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>DATE: {currentDate}</span>
-              <span>TIME: 13:30</span>
+              <span>TIME: 14:00</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span>KIOSK: #PINK-01</span>
-              <span>ORDER: #8824</span>
+              <span>STUDIO: #KAWAII-01</span>
+              <span>ORDER: #KITTY-77</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, marginTop: '2px' }}>
               <span>STATUS: READY</span>
-              <span style={{ color: '#C84B72' }}>♡ 4 LAYOUTS ♡</span>
+              <span style={{ color: '#E65A84' }}>♡ 4 SWEET LAYOUTS ♡</span>
             </div>
           </div>
 
-          {/* Mini Cute Photo Preview Box on Receipt */}
+          {/* Mini Cute Greeting Box on Receipt */}
           <div
             style={{
               backgroundColor: '#FFF0F5',
-              borderRadius: '8px',
-              padding: '10px',
+              border: '1.5px solid #FFDDE8',
+              borderRadius: '12px',
+              padding: '10px 8px',
               textAlign: 'center',
-              marginBottom: '14px',
+              marginBottom: '12px',
+              position: 'relative',
             }}
           >
             <div
               style={{
                 fontFamily: 'var(--font-hand)',
-                fontSize: '18px',
+                fontSize: '20px',
                 color: '#6C4C59',
                 fontWeight: 700,
-                lineHeight: 1.2,
+                lineHeight: 1.15,
               }}
             >
-              "Touch here to capture your cutest moments!"
+              "Touch here to snap your cutest poses! ♡"
             </div>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginTop: '6px' }}>
-              <span style={{ fontSize: '14px' }}>📸</span>
-              <span style={{ fontSize: '14px' }}>🌸</span>
-              <span style={{ fontSize: '14px' }}>✨</span>
-              <span style={{ fontSize: '14px' }}>🎀</span>
+
+            {/* Cute Kawaii Emojis & Icons Row */}
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
+              <CuteStrawberryIcon size={18} />
+              <CuteFlowerIcon size={18} color="#FFB3C6" />
+              <HelloKittyIcon size={20} />
+              <CuteBowIcon size={16} color="#FF527B" />
+              <CuteSparkle size={16} color="#FFAEC9" />
             </div>
           </div>
 
-          {/* Barcode Graphic */}
+          {/* Barcode Graphic with Heart */}
           <div style={{ marginBottom: '8px', textAlign: 'center' }}>
             <div className="thermal-barcode">
               {[3, 1, 2, 4, 1, 3, 2, 1, 4, 2, 1, 3, 4, 1, 2, 3, 1, 4, 2, 1, 3, 2, 4, 1, 2, 3, 1, 2].map((width, i) => (
@@ -278,43 +329,38 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart }) => {
                 />
               ))}
             </div>
-            <div style={{ fontSize: '9px', letterSpacing: '4px', color: '#7E6B75', marginTop: '4px' }}>
-              * 2026 0824 PHOTO *
+            <div style={{ fontSize: '9px', letterSpacing: '3px', color: '#8E7380', marginTop: '4px', fontWeight: 600 }}>
+              * 2026 • HELLO KITTY PHOTO • *
             </div>
           </div>
 
-          {/* Pulsing "TAP TO START" interactive banner */}
+          {/* Pulsing "TOUCH TO START" Kawaii Banner */}
           <div
             style={{
               backgroundColor: '#6C4C59',
               color: '#FFFFFF',
-              borderRadius: '20px',
-              padding: '8px 12px',
-              marginTop: '12px',
+              borderRadius: '24px',
+              padding: '10px 14px',
+              marginTop: '10px',
               textAlign: 'center',
-              boxShadow: '0 4px 12px rgba(108, 76, 89, 0.3)',
+              boxShadow: '0 6px 16px rgba(108, 76, 89, 0.35)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '6px',
+              gap: '8px',
             }}
             className="animate-pulse-cute"
           >
-            <Disc size={14} className="animate-spin" />
+            <CuteBowIcon size={18} color="#FFAEC9" />
             <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', fontWeight: 800, letterSpacing: '1px' }}>
-              TAP RECEIPT TO START
+              TOUCH RECEIPT TO START
             </span>
-            <ArrowDown size={14} />
+            <ArrowDown size={14} strokeWidth={2.5} />
           </div>
         </div>
       </div>
 
       {/* Bottom Footer Hint */}
-      <div style={{ textAlign: 'center', zIndex: 2, paddingBottom: '8px' }}>
-        <p style={{ fontSize: '12px', color: '#9B7B8B', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-          <span>✿</span> Self-Service Kiosk Mode <span>✿</span>
-        </p>
-      </div>
     </div>
   );
 };

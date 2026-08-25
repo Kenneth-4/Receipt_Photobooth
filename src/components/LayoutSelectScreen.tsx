@@ -4,6 +4,13 @@ import { ArrowLeft, HelpCircle, Heart, Star } from 'lucide-react';
 import type { LayoutId } from '../types';
 import { playCutePop, playChime } from '../utils/sound';
 import { HelpModal } from './HelpModal';
+import {
+  HelloKittyIcon,
+  CuteBowIcon,
+  CuteStrawberryIcon,
+  CuteFlowerIcon,
+  CuteSparkle,
+} from './KawaiiIcons';
 
 interface LayoutSelectScreenProps {
   onBackToHome: () => void;
@@ -34,8 +41,25 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const heartBadgeRef = useRef<HTMLDivElement>(null);
+  const stickersRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Floating Kawaii Stickers animation
+    if (stickersRef.current) {
+      anime({
+        targets: stickersRef.current.querySelectorAll('.float-kawaii-layout'),
+        translateY: () => anime.random(-14, 14),
+        translateX: () => anime.random(-10, 10),
+        rotate: () => anime.random(-10, 10),
+        scale: [0.92, 1.1],
+        delay: anime.stagger(160),
+        duration: 3400,
+        direction: 'alternate',
+        loop: true,
+        easing: 'easeInOutQuad',
+      });
+    }
+
     // anime.js staggered entry animation for layout cards
     if (cardsContainerRef.current) {
       anime({
@@ -225,21 +249,44 @@ export const LayoutSelectScreen: React.FC<LayoutSelectScreenProps> = ({
         justifyContent: 'space-between',
         padding: '24px 20px 28px 20px',
         position: 'relative',
+        overflow: 'hidden',
       }}
     >
-      {/* Decorative background star matching mockup */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '105px',
-          right: '18px',
-          pointerEvents: 'none',
-          color: '#FFFFFF',
-          opacity: 0.9,
-          filter: 'drop-shadow(0 2px 6px rgba(240, 140, 170, 0.4))',
-        }}
-      >
-        <Star size={26} strokeWidth={1.8} />
+      {/* Floating Kawaii Stickers (Layout Screen unique arrangement) */}
+      <div ref={stickersRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}>
+        {/* Top Right: Hello Kitty Face */}
+        <div className="float-kawaii-layout" style={{ position: 'absolute', top: '5%', right: '6%', filter: 'drop-shadow(0 4px 12px rgba(230, 90, 132, 0.25))' }}>
+          <HelloKittyIcon size={48} />
+        </div>
+
+        {/* Top Left: Cute Ribbon Bow */}
+        <div className="float-kawaii-layout" style={{ position: 'absolute', top: '7%', left: '7%', filter: 'drop-shadow(0 4px 10px rgba(255, 82, 123, 0.3))' }}>
+          <CuteBowIcon size={38} color="#FF4B72" />
+        </div>
+
+        {/* Mid Left: Kawaii Blossom Flower */}
+        <div className="float-kawaii-layout" style={{ position: 'absolute', top: '48%', left: '3%', filter: 'drop-shadow(0 4px 10px rgba(255, 179, 198, 0.28))' }}>
+          <CuteFlowerIcon size={34} color="#FFAEC9" />
+        </div>
+
+        {/* Mid Right: Kawaii Strawberry */}
+        <div className="float-kawaii-layout" style={{ position: 'absolute', top: '44%', right: '3%', filter: 'drop-shadow(0 4px 10px rgba(255, 77, 109, 0.25))' }}>
+          <CuteStrawberryIcon size={32} />
+        </div>
+
+        {/* Bottom Left: Hello Kitty Face */}
+        <div className="float-kawaii-layout" style={{ position: 'absolute', bottom: '6%', left: '6%', filter: 'drop-shadow(0 4px 12px rgba(230, 90, 132, 0.25))' }}>
+          <HelloKittyIcon size={40} />
+        </div>
+
+        {/* Bottom Right: Cute Ribbon Bow */}
+        <div className="float-kawaii-layout" style={{ position: 'absolute', bottom: '6%', right: '7%', filter: 'drop-shadow(0 4px 10px rgba(255, 82, 123, 0.3))' }}>
+          <CuteBowIcon size={34} color="#FF7096" />
+        </div>
+
+        {/* Sparkles */}
+        <CuteSparkle className="float-kawaii-layout" size={20} color="#FF8CA9" style={{ position: 'absolute', top: '25%', right: '14%' }} />
+        <CuteSparkle className="float-kawaii-layout" size={22} color="#FFAEC9" style={{ position: 'absolute', bottom: '28%', left: '12%' }} />
       </div>
 
       {/* Top Header Bar */}
